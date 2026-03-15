@@ -1,3 +1,6 @@
+server:
+  servlet:
+    context-path: "/api/v1"
 spring:
   application:
     name: TwoChairsBackend
@@ -14,3 +17,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    open-in-view: on
+
+  security:
+    jwt:
+      issuer: "twochairs"
+      secret: "b3RZHJG3hlkRWRkUGQmK1WDfHDLKU8x1" # минимум 32+ символа
+      accessTokenTtlSeconds: 2592000 # 30 дней
+
+  devtools:
+    livereload:
+      enabled: true
