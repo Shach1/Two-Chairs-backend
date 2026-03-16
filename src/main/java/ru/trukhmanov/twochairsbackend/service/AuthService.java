@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.trukhmanov.twochairsbackend.dto.AuthResponse;
+import ru.trukhmanov.twochairsbackend.dto.auth.AuthResponse;
 import ru.trukhmanov.twochairsbackend.entity.AuthSmsCode;
 import ru.trukhmanov.twochairsbackend.security.JwtService;
 import ru.trukhmanov.twochairsbackend.entity.User;
