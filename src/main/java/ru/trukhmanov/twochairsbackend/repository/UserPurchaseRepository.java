@@ -16,4 +16,15 @@ public interface UserPurchaseRepository extends JpaRepository<UserPurchase, Long
           and p.deckId = :deckId
         """)
     boolean hasDeck(@Param("userId") long userId, @Param("deckId") long deckId);
+
+    @Query("""
+        select (count(up) > 0)
+        from UserPurchase up
+        join Product p on p.id = up.productId
+        where up.userId = :userId
+          and p.type = 'FEATURE_CREATE_DECKS'
+        """)
+    boolean hasCreateDecksFeature(@Param("userId") long userId);
+
+    boolean existsByUserIdAndProductId(long userId, long productId);
 }

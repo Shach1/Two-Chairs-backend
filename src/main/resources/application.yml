@@ -26,5 +26,9 @@ spring:
       accessTokenTtlSeconds: 2592000 # 30 дней
 
   devtools:
-    livereload:
+    restart:
       enabled: true
+      poll-interval: 1s
+      quiet-period: 400ms
+      log-condition-evaluation-delta: true
+      additional-exclude: src/main

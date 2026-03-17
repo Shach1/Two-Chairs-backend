@@ -1,4 +1,4 @@
-package ru.trukhmanov.twochairsbackend.dto.game;
+package ru.trukhmanov.twochairsbackend.dto.game.deck;
 
 public record DeckDto(
         long id,

@@ -3,7 +3,7 @@ package ru.trukhmanov.twochairsbackend.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.trukhmanov.twochairsbackend.dto.game.DeckDto;
+import ru.trukhmanov.twochairsbackend.dto.game.deck.DeckDto;
 import ru.trukhmanov.twochairsbackend.service.DeckService;
 import ru.trukhmanov.twochairsbackend.util.CurrentUser;
 

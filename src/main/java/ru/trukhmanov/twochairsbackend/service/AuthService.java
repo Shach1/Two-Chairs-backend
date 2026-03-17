@@ -45,7 +45,7 @@ public class AuthService {
     @Transactional
     public AuthResponse verifyCode(String phoneNumber, String code) {
         var sms = codeRepository.findLatestActiveByPhone(phoneNumber)
-                .orElseThrow(() -> new IllegalArgumentException("Code not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Code not found for this phone number"));
 
         if (sms.isExpired()) throw new IllegalArgumentException("Code expired");
 

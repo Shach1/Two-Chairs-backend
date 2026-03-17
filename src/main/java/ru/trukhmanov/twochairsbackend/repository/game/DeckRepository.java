@@ -19,7 +19,6 @@ public interface DeckRepository extends JpaRepository<Deck, Long> {
         """)
     List<Deck> findStorePaidDecks();
 
-    // доступные колоды для обыного пользователя
     @Query("""
         select d from Deck d
         where d.published = true
@@ -37,7 +36,6 @@ public interface DeckRepository extends JpaRepository<Deck, Long> {
         """)
     List<Deck> findAccessibleForNonPremium(@Param("userId") long userId);
 
-    // Доступные колоды для премиума
     @Query("""
         select d from Deck d
         where d.published = true
@@ -49,4 +47,6 @@ public interface DeckRepository extends JpaRepository<Deck, Long> {
           )
         """)
     List<Deck> findAccessibleForPremium(@Param("userId") long userId);
+
+    List<Deck> findByOwnerUserIdAndTypeOrderByIdDesc(long ownerUserId, String type);
 }

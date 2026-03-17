@@ -1,7 +1,7 @@
 package ru.trukhmanov.twochairsbackend.service;
 
 import org.springframework.stereotype.Service;
-import ru.trukhmanov.twochairsbackend.dto.game.DeckDto;
+import ru.trukhmanov.twochairsbackend.dto.game.deck.DeckDto;
 import ru.trukhmanov.twochairsbackend.entity.Deck;
 import ru.trukhmanov.twochairsbackend.repository.game.DeckRepository;
 import ru.trukhmanov.twochairsbackend.repository.UserPurchaseRepository;
