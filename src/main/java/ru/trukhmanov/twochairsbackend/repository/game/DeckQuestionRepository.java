@@ -6,4 +6,6 @@ import ru.trukhmanov.twochairsbackend.entity.DeckQuestionId;
 
 public interface DeckQuestionRepository extends JpaRepository<DeckQuestion, DeckQuestionId> {
     boolean existsByIdDeckIdAndIdQuestionId(long deckId, long questionId);
+
+    void deleteByIdDeckIdAndIdQuestionId(long deckId, long questionId);
 }

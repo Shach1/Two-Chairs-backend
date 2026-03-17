@@ -25,4 +25,13 @@ public interface QuestionRepository extends JpaRepository<Question, Long>{
         limit 1
         """, nativeQuery = true)
     Optional<Question> findRandomNext(@Param("deckId") long deckId, @Param("userId") long userId);
+
+    @Query(value = """
+        select q.*
+        from questions q
+        join deck_questions dq on dq.question_id = q.id
+        where dq.deck_id = :deckId
+        order by q.id
+        """, nativeQuery = true)
+    List<Question> findAllByDeckId(@Param("deckId") long deckId);
     }

@@ -64,28 +64,45 @@ public class DeckService {
     }
 
     public void assertCanAccessDeck(long userId, long deckId) {
-        boolean premium = userRepository.findById(userId).orElseThrow().isPremium();
+        var user = userRepository.findById(userId).orElseThrow();
         Deck deck = deckRepository.findById(deckId).orElseThrow();
 
+        // 1) Своя колода — всегда доступна (даже не опубликована / PRIVATE)
+        if (Objects.equals(deck.getOwnerUserId(), userId)) {
+            return;
+        }
+
+        // 2) Чужая колода: должна быть опубликована
         if (!deck.isPublished()) {
             throw new IllegalArgumentException("Deck is not published");
         }
 
-        // свои колоды доступны всегда
-        if (Objects.equals(deck.getOwnerUserId(), userId)) return;
+        boolean premium = user.isPremium();
 
-        // бесплатные доступны всем
-        if (deck.getPriceRub() == 0) return;
+        // 3) DEFAULT (системные): доступны всем всегда (при условии published)
+        if ("DEFAULT".equals(deck.getType())) {
+            return;
+        }
 
+        // 4) Чужие USER без премиума — никогда
+        if ("USER".equals(deck.getType()) && !premium) {
+            throw new IllegalArgumentException("Deck not accessible");
+        }
+
+        // 5) Premium: видит публичные USER + все PAID
         if (premium) {
-            // премиум: PAID доступны, USER публичные доступны
             if ("PAID".equals(deck.getType())) return;
             if ("USER".equals(deck.getType()) && "PUBLIC".equals(deck.getVisibility())) return;
-        } else {
-            // без премиума: только купленные платные колоды
-            boolean has = purchaseRepository.hasDeck(userId, deckId);
-            if (has) return;
+            throw new IllegalArgumentException("Deck not accessible");
         }
+
+        // 6) Non-premium: только PAID
+        if ("PAID".equals(deck.getType())) {
+            if (purchaseRepository.hasDeck(userId, deckId)) return;
+            throw new IllegalArgumentException("Deck not accessible");
+        }
+
+        // 7) Всё остальное — запрещено по умолчанию
         throw new IllegalArgumentException("Deck not accessible");
     }
 }

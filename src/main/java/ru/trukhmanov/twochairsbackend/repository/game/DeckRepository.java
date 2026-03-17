@@ -20,20 +20,26 @@ public interface DeckRepository extends JpaRepository<Deck, Long> {
     List<Deck> findStorePaidDecks();
 
     @Query("""
-        select d from Deck d
-        where d.published = true
-          and (
-                d.priceRub = 0
-                or d.ownerUserId = :userId
-                or d.id in (
-                    select p.deckId from Product p
-                    join UserPurchase up on up.productId = p.id
-                    where up.userId = :userId
-                      and p.type = 'DECK'
-                      and p.deckId is not null
-                )
+    select d from Deck d
+    where
+      (
+        d.ownerUserId = :userId
+      )
+      or
+      (
+        d.published = true
+        and (
+          d.type = 'DEFAULT'
+          or d.id in (
+              select p.deckId from Product p
+              join UserPurchase up on up.productId = p.id
+              where up.userId = :userId
+                and p.type = 'DECK'
+                and p.deckId is not null
           )
-        """)
+        )
+      )
+    """)
     List<Deck> findAccessibleForNonPremium(@Param("userId") long userId);
 
     @Query("""

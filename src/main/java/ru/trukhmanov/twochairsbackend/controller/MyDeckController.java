@@ -2,6 +2,7 @@ package ru.trukhmanov.twochairsbackend.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.trukhmanov.twochairsbackend.dto.game.QuestionDto;
 import ru.trukhmanov.twochairsbackend.dto.game.deck.*;
 import ru.trukhmanov.twochairsbackend.service.MyDeckService;
 import ru.trukhmanov.twochairsbackend.util.CurrentUser;
@@ -23,6 +24,12 @@ public class MyDeckController {
     public List<DeckDto> myDecks() {
         long userId = CurrentUser.id();
         return myDeckService.myDecks(userId);
+    }
+
+    @GetMapping("/picker")
+    public List<MyDeckPickDto> picker() {
+        long userId = CurrentUser.id();
+        return myDeckService.picker(userId);
     }
 
     @PostMapping
@@ -56,5 +63,18 @@ public class MyDeckController {
         long userId = CurrentUser.id();
         myDeckService.addExistingQuestion(userId, deckId, questionId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{deckId}/questions")
+    public List<QuestionDto> questions(@PathVariable long deckId) {
+        long userId = CurrentUser.id();
+        return myDeckService.listQuestions(userId, deckId);
+    }
+
+    @DeleteMapping("/{deckId}/questions/{questionId}")
+    public ResponseEntity<String> removeQuestion(@PathVariable long deckId, @PathVariable long questionId) {
+        long userId = CurrentUser.id();
+        myDeckService.removeQuestion(userId, deckId, questionId);
+        return ResponseEntity.ok("ok");
     }
 }

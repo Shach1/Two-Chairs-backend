@@ -2,10 +2,8 @@ package ru.trukhmanov.twochairsbackend.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import ru.trukhmanov.twochairsbackend.dto.game.deck.CreateDeckRequest;
-import ru.trukhmanov.twochairsbackend.dto.game.deck.CreateQuestionRequest;
-import ru.trukhmanov.twochairsbackend.dto.game.deck.DeckDto;
-import ru.trukhmanov.twochairsbackend.dto.game.deck.UpdateDeckRequest;
+import ru.trukhmanov.twochairsbackend.dto.game.QuestionDto;
+import ru.trukhmanov.twochairsbackend.dto.game.deck.*;
 import ru.trukhmanov.twochairsbackend.entity.Deck;
 import ru.trukhmanov.twochairsbackend.entity.DeckQuestion;
 import ru.trukhmanov.twochairsbackend.entity.Question;
@@ -143,5 +141,34 @@ public class MyDeckService {
         }
 
         deckQuestionRepository.save(DeckQuestion.of(deckId, questionId));
+    }
+
+    public List<QuestionDto> listQuestions(long userId, long deckId) {
+        Deck deck = deckRepository.findById(deckId).orElseThrow();
+        if (!Objects.equals(deck.getOwnerUserId(), userId)) throw new IllegalArgumentException("Not your deck");
+        if (!"USER".equals(deck.getType())) throw new IllegalArgumentException("Not a user deck");
+
+        return questionRepository.findAllByDeckId(deckId).stream()
+                .map(q -> new QuestionDto(q.getId(), deckId, q.getOptionA(), q.getOptionB()))
+                .toList();
+    }
+
+    @Transactional
+    public void removeQuestion(long userId, long deckId, long questionId) {
+        Deck deck = deckRepository.findById(deckId).orElseThrow();
+        if (!Objects.equals(deck.getOwnerUserId(), userId)) throw new IllegalArgumentException("Not your deck");
+        if (!"USER".equals(deck.getType())) throw new IllegalArgumentException("Not a user deck");
+
+        if (!deckQuestionRepository.existsByIdDeckIdAndIdQuestionId(deckId, questionId)) {
+            throw new IllegalArgumentException("Question is not in this deck");
+        }
+
+        deckQuestionRepository.deleteByIdDeckIdAndIdQuestionId(deckId, questionId);
+    }
+
+    public List<MyDeckPickDto> picker(long userId) {
+        return deckRepository.findByOwnerUserIdAndTypeOrderByIdDesc(userId, "USER").stream()
+                .map(d -> new MyDeckPickDto(d.getId(), d.getTitle()))
+                .toList();
     }
 }
