@@ -16,9 +16,6 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="deck_id", nullable=false)
-    private Long deckId;
-
     @Column(name="option_a", nullable=false)
     private String optionA;
 

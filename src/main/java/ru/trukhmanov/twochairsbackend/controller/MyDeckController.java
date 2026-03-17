@@ -51,10 +51,10 @@ public class MyDeckController {
         return Map.of("questionId", questionId);
     }
 
-    @PostMapping("/{deckId}/questions")
-    public Map<String, Long> addQuestion(@PathVariable long deckId, @RequestBody CreateQuestionRequest req) {
+    @PostMapping("/{deckId}/questions/{questionId}")
+    public ResponseEntity<String> addExistingQuestion(@PathVariable long deckId, @PathVariable long questionId) {
         long userId = CurrentUser.id();
-        long questionId = myDeckService.addQuestion(userId, deckId, req);
-        return Map.of("questionId", questionId);
+        myDeckService.addExistingQuestion(userId, deckId, questionId);
+        return ResponseEntity.ok().build();
     }
 }

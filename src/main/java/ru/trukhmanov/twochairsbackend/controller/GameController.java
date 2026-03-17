@@ -26,9 +26,11 @@ public class GameController {
                 .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
-    @PostMapping("/questions/{questionId}/answer")
-    public AnswerStatsDto answer(@PathVariable long questionId, @RequestBody AnswerRequest req) {
+    @PostMapping("/decks/{deckId}/questions/{questionId}/answer")
+    public AnswerStatsDto answer(@PathVariable long deckId,
+                                 @PathVariable long questionId,
+                                 @RequestBody AnswerRequest req) {
         long userId = CurrentUser.id();
-        return gameService.answer(userId, questionId, req.answer());
+        return gameService.answer(userId, deckId, questionId, req.answer());
     }
 }

@@ -24,11 +24,3 @@ spring:
       issuer: "twochairs"
       secret: "b3RZHJG3hlkRWRkUGQmK1WDfHDLKU8x1" # минимум 32+ символа
       accessTokenTtlSeconds: 2592000 # 30 дней
-
-  devtools:
-    restart:
-      enabled: true
-      poll-interval: 1s
-      quiet-period: 400ms
-      log-condition-evaluation-delta: true
-      additional-exclude: src/main

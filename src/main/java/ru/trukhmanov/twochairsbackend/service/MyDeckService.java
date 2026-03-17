@@ -7,9 +7,11 @@ import ru.trukhmanov.twochairsbackend.dto.game.deck.CreateQuestionRequest;
 import ru.trukhmanov.twochairsbackend.dto.game.deck.DeckDto;
 import ru.trukhmanov.twochairsbackend.dto.game.deck.UpdateDeckRequest;
 import ru.trukhmanov.twochairsbackend.entity.Deck;
+import ru.trukhmanov.twochairsbackend.entity.DeckQuestion;
 import ru.trukhmanov.twochairsbackend.entity.Question;
 import ru.trukhmanov.twochairsbackend.repository.UserPurchaseRepository;
 import ru.trukhmanov.twochairsbackend.repository.UserRepository;
+import ru.trukhmanov.twochairsbackend.repository.game.DeckQuestionRepository;
 import ru.trukhmanov.twochairsbackend.repository.game.DeckRepository;
 import ru.trukhmanov.twochairsbackend.repository.game.QuestionRepository;
 
@@ -23,15 +25,18 @@ public class MyDeckService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final UserPurchaseRepository purchaseRepository;
+    private final DeckQuestionRepository deckQuestionRepository;
 
     public MyDeckService(DeckRepository deckRepository,
                          QuestionRepository questionRepository,
                          UserRepository userRepository,
-                         UserPurchaseRepository purchaseRepository) {
+                         UserPurchaseRepository purchaseRepository,
+                         DeckQuestionRepository deckQuestionRepository) {
         this.deckRepository = deckRepository;
         this.questionRepository = questionRepository;
         this.userRepository = userRepository;
         this.purchaseRepository = purchaseRepository;
+        this.deckQuestionRepository = deckQuestionRepository;
     }
 
     public List<DeckDto> myDecks(long userId) {
@@ -105,19 +110,38 @@ public class MyDeckService {
     public long addQuestion(long userId, long deckId, CreateQuestionRequest req) {
         Deck deck = deckRepository.findById(deckId).orElseThrow();
         if (!Objects.equals(deck.getOwnerUserId(), userId)) throw new IllegalArgumentException("Not your deck");
-        if (!"USER".equals(deck.getType())) throw new IllegalArgumentException("Not a user deck");
 
-        if (req.optionA() == null || req.optionA().isBlank()) throw new IllegalArgumentException("optionA required");
-        if (req.optionB() == null || req.optionB().isBlank()) throw new IllegalArgumentException("optionB required");
-        if (req.optionA().trim().equals(req.optionB().trim())) throw new IllegalArgumentException("options must differ");
+        String a = req.optionA() == null ? null : req.optionA().trim();
+        String b = req.optionB() == null ? null : req.optionB().trim();
+
+        if (a == null || a.isBlank()) throw new IllegalArgumentException("optionA required");
+        if (b == null || b.isBlank()) throw new IllegalArgumentException("optionB required");
+        if (a.equals(b)) throw new IllegalArgumentException("options must differ");
 
         Question q = questionRepository.save(Question.builder()
-                .deckId(deckId)
-                .optionA(req.optionA().trim())
-                .optionB(req.optionB().trim())
+                .optionA(a)
+                .optionB(b)
                 .active(true)
                 .build());
 
+        // Создаём связь вопроса с колодой
+        deckQuestionRepository.save(DeckQuestion.of(deckId, q.getId()));
+
         return q.getId();
+    }
+
+    @Transactional
+    public void addExistingQuestion(long userId, long deckId, long questionId) {
+        Deck deck = deckRepository.findById(deckId).orElseThrow();
+        if (!Objects.equals(deck.getOwnerUserId(), userId)) throw new IllegalArgumentException("Not your deck");
+        if (!"USER".equals(deck.getType())) throw new IllegalArgumentException("Not a user deck");
+
+        questionRepository.findById(questionId).orElseThrow(() -> new IllegalArgumentException("Question not found"));
+
+        if (deckQuestionRepository.existsByIdDeckIdAndIdQuestionId(deckId, questionId)) {
+            throw new IllegalArgumentException("Already added");
+        }
+
+        deckQuestionRepository.save(DeckQuestion.of(deckId, questionId));
     }
 }
