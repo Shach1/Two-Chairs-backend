@@ -1,11 +1,14 @@
 package ru.trukhmanov.twochairsbackend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
+import ru.trukhmanov.twochairsbackend.dto.ErrorResponse;
 import ru.trukhmanov.twochairsbackend.dto.store.ProductDto;
 import ru.trukhmanov.twochairsbackend.dto.store.PurchaseRequest;
 import ru.trukhmanov.twochairsbackend.dto.store.PurchaseResponse;
@@ -40,8 +43,9 @@ public class StoreController {
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Покупка выполнена"),
-            @ApiResponse(responseCode = "400", description = "Невалидная позиция / уже куплено")
-    })
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))    })
     @PostMapping("/purchase")
     public PurchaseResponse purchase(@RequestBody PurchaseRequest req) {
         long userId = CurrentUser.id();

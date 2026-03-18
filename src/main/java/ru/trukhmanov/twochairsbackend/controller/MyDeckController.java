@@ -2,12 +2,15 @@ package ru.trukhmanov.twochairsbackend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.trukhmanov.twochairsbackend.dto.ErrorResponse;
 import ru.trukhmanov.twochairsbackend.dto.game.QuestionDto;
 import ru.trukhmanov.twochairsbackend.dto.game.deck.*;
 import ru.trukhmanov.twochairsbackend.service.MyDeckService;
@@ -47,7 +50,9 @@ public class MyDeckController {
     @Operation(summary = "Создать колоду")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Колода создана"),
-            @ApiResponse(responseCode = "400", description = "Нет привилегии для этого действия")
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
     public DeckDto create(@RequestBody CreateDeckRequest req) {
@@ -58,8 +63,9 @@ public class MyDeckController {
     @Operation(summary = "Обновить колоду")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Колода обновлена"),
-            @ApiResponse(responseCode = "400", description = "Нет доступа")
-    })
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))    })
     @PatchMapping("/{deckId}")
     public DeckDto update(
             @Parameter(description = "ID колоды") @PathVariable long deckId,
@@ -72,8 +78,9 @@ public class MyDeckController {
     @Operation(summary = "Опубликовать колоду")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Опубликована"),
-            @ApiResponse(responseCode = "400", description = "Нет доступа")
-    })
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))    })
     @PostMapping("/{deckId}/publish")
     public ResponseEntity<String> publish(@Parameter(description = "ID колоды") @PathVariable long deckId) {
         long userId = CurrentUser.id();
@@ -84,8 +91,9 @@ public class MyDeckController {
     @Operation(summary = "Добавить новый вопрос в колоду", description = "Создаёт новый вопрос")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Вопрос добавлен"),
-            @ApiResponse(responseCode = "400", description = "Уже добавлен / нет доступа")
-    })
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))    })
     @PostMapping("/{deckId}/questions")
     public Map<String, Long> addQuestion(
             @Parameter(description = "ID колоды") @PathVariable long deckId,
@@ -99,8 +107,9 @@ public class MyDeckController {
     @Operation(summary = "Добавить существующий вопрос в колоду", description = "Добавляет существующий вопрос в колоду")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Вопрос добавлен"),
-            @ApiResponse(responseCode = "400", description = "Уже добавлен / нет доступа")
-    })
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))    })
     @PostMapping("/{deckId}/questions/{questionId}")
     public ResponseEntity<String> addExistingQuestion(
             @Parameter(description = "ID колоды") @PathVariable long deckId,
@@ -114,8 +123,9 @@ public class MyDeckController {
     @Operation(summary = "Список вопросов колоды")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Список вопросов"),
-            @ApiResponse(responseCode = "400", description = "Нет доступа к колоде")
-    })
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))    })
     @GetMapping("/{deckId}/questions")
     public List<QuestionDto> questions(@Parameter(description = "ID колоды") @PathVariable long deckId) {
         long userId = CurrentUser.id();
@@ -125,8 +135,9 @@ public class MyDeckController {
     @Operation(summary = "Удалить вопрос из колоды", description = "Удаляет вопрос из колоды, не удаляя сам вопрос их базы")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Удалено"),
-            @ApiResponse(responseCode = "400", description = "Нет доступа")
-    })
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))    })
     @DeleteMapping("/{deckId}/questions/{questionId}")
     public ResponseEntity<String> removeQuestion(
             @Parameter(description = "ID колоды") @PathVariable long deckId,

@@ -1,6 +1,8 @@
 package ru.trukhmanov.twochairsbackend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.trukhmanov.twochairsbackend.dto.ErrorResponse;
 import ru.trukhmanov.twochairsbackend.dto.auth.AuthResponse;
 import ru.trukhmanov.twochairsbackend.dto.auth.SendCodeRequest;
 import ru.trukhmanov.twochairsbackend.dto.auth.SendCodeResponse;
@@ -38,7 +41,9 @@ public class AuthController {
     @Operation(summary = "Подтвердить код", description = "Проверяет код и возвращает токен(ы) авторизации.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Код верный"),
-            @ApiResponse(responseCode = "400", description = "Код неверный/истёк")
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/verify-code")
     public AuthResponse verify(@RequestBody VerifyCodeRequest req) {

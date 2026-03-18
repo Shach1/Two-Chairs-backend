@@ -2,12 +2,15 @@ package ru.trukhmanov.twochairsbackend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.trukhmanov.twochairsbackend.dto.ErrorResponse;
 import ru.trukhmanov.twochairsbackend.dto.game.AnswerRequest;
 import ru.trukhmanov.twochairsbackend.dto.game.AnswerStatsDto;
 import ru.trukhmanov.twochairsbackend.dto.game.QuestionDto;
@@ -29,8 +32,9 @@ public class GameController {
     @Operation(summary = "Следующий вопрос", description = "Возвращает следующий вопрос для колоды. Если вопросов нет — 204.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Вопрос найден"),
-            @ApiResponse(responseCode = "400", description = "Вопросов нет"),
-            @ApiResponse(responseCode = "400", description = "Нет доступа к колоде")
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/decks/{deckId}/next-question")
     public ResponseEntity<QuestionDto> nextQuestion(@Parameter(description = "ID колоды") @PathVariable long deckId) {
@@ -43,7 +47,9 @@ public class GameController {
     @Operation(summary = "Ответить на вопрос", description = "Записывает ответ и возвращает статистику по вопросу (общая для questionId).")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Ответ принят"),
-            @ApiResponse(responseCode = "400", description = "Нет доступа / невалидный ответ")
+            @ApiResponse(responseCode = "400", description = "Ошибка",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/decks/{deckId}/questions/{questionId}/answer")
     public AnswerStatsDto answer(
