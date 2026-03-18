@@ -24,3 +24,6 @@ spring:
       issuer: "twochairs"
       secret: "b3RZHJG3hlkRWRkUGQmK1WDfHDLKU8x1" # минимум 32+ символа
       accessTokenTtlSeconds: 2592000 # 30 дней
+springdoc:
+  swagger-ui:
+    path: "/swagger-ui.html"
