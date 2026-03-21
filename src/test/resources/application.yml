@@ -1,0 +1,19 @@
+spring:
+  docker:
+    compose:
+      enabled: false
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+  security:
+    jwt:
+      issuer: "twochairs-test"
+      secret: "b3RZHJG3hlkRWRkUGQmK1WDfHDLKU8x1"
+      accessTokenTtlSeconds: 3600
