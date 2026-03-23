@@ -26,6 +26,14 @@ class MyDeckService(
     private val deckQuestionRepository: DeckQuestionRepository
 ) {
 
+    fun assertCanCreateDeck(userId: Long) {
+        val user = userRepository.findById(userId).orElseThrow()
+        val allowed = user.premium || purchaseRepository.hasCreateDecksFeature(userId)
+        if (!allowed) {
+            throw IllegalArgumentException("To create your own decks you need PREMIUM or FEATURE_CREATE_DECKS")
+        }
+    }
+
     fun myDecks(userId: Long): List<DeckDto> {
         return deckRepository.findByOwnerUserIdAndTypeOrderByIdDesc(userId, "USER")
             .map { deck ->
@@ -45,11 +53,7 @@ class MyDeckService(
 
     @Transactional
     fun createDeck(userId: Long, req: CreateDeckRequest): DeckDto {
-        val user = userRepository.findById(userId).orElseThrow()
-        val allowed = user.premium || purchaseRepository.hasCreateDecksFeature(userId)
-        if (!allowed) {
-            throw IllegalArgumentException("Feature not purchased")
-        }
+        assertCanCreateDeck(userId)
 
         if (req.title.isBlank()) {
             throw IllegalArgumentException("Title is required")

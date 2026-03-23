@@ -51,6 +51,29 @@ class MyDeckController(
         return myDeckService.picker(userId)
     }
 
+    @Operation(summary = "Проверка права на создание своей колоды")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Пользователь может создавать колоды"),
+            ApiResponse(
+                responseCode = "400",
+                description = "Нет прав на создание колод",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ErrorResponse::class)
+                    )
+                ]
+            )
+        ]
+    )
+    @GetMapping("/can-create")
+    fun canCreateOwnDeck(): ResponseEntity<Void> {
+        val userId = CurrentUser.id()
+        myDeckService.assertCanCreateDeck(userId)
+        return ResponseEntity.ok().build()
+    }
+
     @Operation(summary = "Создать колоду")
     @ApiResponses(
         value = [

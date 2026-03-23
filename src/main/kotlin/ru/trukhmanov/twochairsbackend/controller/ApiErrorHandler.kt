@@ -60,6 +60,7 @@ class ApiErrorHandler {
             "Product is not active" to "PRODUCT_IS_INACTIVE",
             "Already purchased" to "PRODUCT_ALREADY_PURCHASED",
             "Product deckId is null" to "BAD_PARAMETER",
+            "To create your own decks you need PREMIUM or FEATURE_CREATE_DECKS" to "CREATE_DECKS_FEATURE_REQUIRED",
             "Code not found for this phone number" to "SMS_CODE_NOT_FOUND",
             "Code expired" to "SMS_CODE_EXPIRED",
             "Invalid code" to "SMS_CODE_IS_INVALID"
